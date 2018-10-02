@@ -60,7 +60,18 @@ Simple modifications or addition can be applied to the above templates to create
 ### Deep autoencoders
 Autoencoders are relatively simple generative models compared to the state-of-the-art GANs. The basic idea is to project a high-dimensional vector (eg. an image) to a low-dimensional latent space, and then reconstruct the image based on this latent code representation.
 #### Settings
-For comparison, I trained two autoencoders that reconstruct images from 10-dimensional and 100-dimensional latent codes respectively. All models uses **Adam** optimizer with **betas = (0.5, 0.999), learning rate = 0.0002**.
+For comparison, I trained two autoencoders: one reconstructs images from 2-dimensional latent codes, the other from 100-dimensional latent codes. All models uses **Adam** optimizer with **betas = (0.5, 0.999), learning rate = 0.0002**.
 #### Results
+Reconstruction from 100 dimension latent code.  
 
+|Original|Reconstructed|
+| ------ | ------------|
+|![orig](./AE/samples/100_dim/orig.png)|![orig](./AE/samples/100_dim/epoch_50_step_600.png)
+After 50 epochs, images can almost be perfectly reconstructed.
+***
+Reconstruction from 2 dimension latent code.  
 
+|Original|Reconstructed|
+| ------ | ------------|
+|![orig](./AE/samples/2_dim/orig.png)|![orig](./AE/samples/2_dim/epoch_50_step_600.png)
+The results are blurry since images are reconstructed from 2-dimensional codes, where the original images are 32 * 32 = 1024 dimensional vectors. Much information is lost after encoding process.
