@@ -79,4 +79,6 @@ Reconstruction from 2 dimension latent code.
 The results are blurry since images are reconstructed from 2-dimensional codes, where the original images are 32 * 32 = 1024 dimensional vectors. Much information is lost after encoding process.
 ***
 We can also generate images on the 2-dimensional manifold. From the results below, we can see that there seems to be some correlation between the digit shapes and the dimenions.
+
 ![manifold](./AE/samples/manifold.png)
+
