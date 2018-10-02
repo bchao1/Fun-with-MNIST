@@ -5,15 +5,17 @@ Created on Tue Oct  2 17:51:41 2018
 @author: USER
 """
 
+import os
 import torch
 import torch.nn as nn
 import numpy as np
 import utils
 from Autoencoder import Autoencoder
+import torchvision
 
 if __name__ == '__main__':
     
-    epochs = 200
+    epochs = 50
     batch_size = 100
     latent_dim = 100
     dataloader = utils.get_dataloader(batch_size)
@@ -48,11 +50,15 @@ if __name__ == '__main__':
             loss_log.append(loss.item())
             
             utils.show_process(epoch_i, step_i + 1, step_per_epoch, loss_log)
-            if (step_i + 1) % 200 == 0:
-                reconstructed = net(result)
-                utils.save_image(reconstructed, 10, epoch_i, step_i + 1, sample_dir)
+            
+        if epoch_i == 1:
+            torchvision.utils.save_image(result, 
+                                         os.path.join(sample_dir, 'orig.png'), 
+                                         nrow = 10)
+        reconstructed = net(result)
+        utils.save_image(reconstructed, 10, epoch_i, step_i + 1, sample_dir)
                 
-        utils.save_model(net, optim, loss_log, checkpoint_dir, 'G.ckpt')
+        utils.save_model(net, optim, loss_log, checkpoint_dir, 'autoencoder.ckpt')
         
             
     
