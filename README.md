@@ -67,6 +67,7 @@ Reconstruction from 100 dimension latent code.
 |Original|Reconstructed|
 | ------ | ------------|
 |![orig](./AE/samples/100_dim/orig.png)|![orig](./AE/samples/100_dim/epoch_50_step_600.png)
+
 After 50 epochs, images can almost be perfectly reconstructed.
 ***
 Reconstruction from 2 dimension latent code.  
@@ -74,4 +75,5 @@ Reconstruction from 2 dimension latent code.
 |Original|Reconstructed|
 | ------ | ------------|
 |![orig](./AE/samples/2_dim/orig.png)|![orig](./AE/samples/2_dim/epoch_50_step_600.png)
+
 The results are blurry since images are reconstructed from 2-dimensional codes, where the original images are 32 * 32 = 1024 dimensional vectors. Much information is lost after encoding process.
