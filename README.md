@@ -1,5 +1,5 @@
 # Fun with MNIST
-All MNIST images are padded to 32 * 32 for the sake of convenience.
+All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST data is already downloaded in the `./data` directory.
 ## Table of contents
 - Basics
     - MNIST Classification
@@ -59,3 +59,8 @@ nn.Sequential(
 Simple modifications or addition can be applied to the above templates to create different generative models. For example, in DCGAN generators, usually we apply a `Tanh` activation function at the output layer. 
 ### Deep autoencoders
 Autoencoders are relatively simple generative models compared to the state-of-the-art GANs. The basic idea is to project a high-dimensional vector (eg. an image) to a low-dimensional latent space, and then reconstruct the image based on this latent code representation.
+#### Settings
+For comparison, I trained two autoencoders that reconstruct images from 10-dimensional and 100-dimensional latent codes respectively. All models uses **Adam** optimizer with **betas = (0.5, 0.999), learning rate = 0.0002**.
+#### Results
+
+
