@@ -54,5 +54,5 @@ class Autoencoder(nn.Module):
     
 if __name__ == '__main__':
     AE = Autoencoder()
-    model = torch.load('./autoencoder_100.ckpt', 'cpu')
-    AE.load_state_dict(model['model'])
+    x = torch.randn(100, 1, 32, 32)
+    o = AE.encoder(x)
