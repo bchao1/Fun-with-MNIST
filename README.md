@@ -78,7 +78,7 @@ Reconstruction from 2 dimension latent code. (last layer of the encoder with **s
 
 |Original|Reconstructed|
 | ------ | ------------|
-|![orig](./AE/samples/2_dim/orig.png)|![orig](./AE/samples/2_dim/epoch_50_step_600.png)|
+|![orig](./AE/samples/2_dim/orig.png)|![orig](./AE/samples/2_dim/process.gif)|
 
 The results are blurry since images are reconstructed from 2-dimensional codes, where the original images are 32 * 32 = 1024 dimensional vectors. Much information is lost after encoding process.
 ***
@@ -99,7 +99,7 @@ Below are the resonctruction results after 50 epochs with the sigmoid activation
 
 |Original|Reconstructed|
 | ------ | ------------|
-|![orig](./AE/samples/no_sig_no_reg/orig.png)|![orig](./AE/samples/no_sig_no_reg/epoch_50_step_600.png)|
+|![orig](./AE/samples/no_sig_no_reg/orig.png)|![reconstructed](./AE/samples/no_sig_no_reg/process.gif)|
 
 Scatter plot of the 2D manifold.  
 
@@ -111,7 +111,7 @@ After adding L2 regularization of the latent codes to the loss (weight = 0.2), w
 
 |Original|Reconstructed|
 | ------ | ------------|
-|![orig](./AE/samples/no_sig_reg/orig.png)|![orig](./AE/samples/no_sig_reg/epoch_50_step_600.png)|
+|![orig](./AE/samples/no_sig_reg/orig.png)|![reconstructed](./AE/samples/no_sig_reg/process.gif)|
 
 Scatter plot of the 2D manifold.  
 
@@ -134,6 +134,10 @@ If we want to model the decoder input as an N(0,1) normal distribution, then we 
 ### GAN: Generative Adversarial Networks
 #### Algorithm
 ![gan_loss](./img_src/gan_algo.png)
+#### Results
+|Real images|Generated|
+| ------ | ------------|
+|![real](./GAN/samples/real.png)|![fake](./GAN/samples/process.gif)|
 ***
 ### ACGAN: Auxiliary Classifier GANs
 In ACGAN, the discriminator not only learns to distinguish fake and real images, but also tries to classify the images. This allows us to disentangle the class information and generate images conditionally.
