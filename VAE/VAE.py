@@ -9,10 +9,10 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
-class Autoencoder(nn.Module):
+class VAE(nn.Module):
     def __init__(self, latent_dim = 100):
-        super(Autoencoder, self).__init__()
-        
+        super(VAE, self).__init__()
+
         self.latent_dim = latent_dim
         self.encoder = nn.Sequential(
                 nn.Conv2d(1, 64, 4, 2, 1, bias = False),
@@ -55,7 +55,7 @@ class Autoencoder(nn.Module):
         self.z_mean = mu
         self.z_sigma = sigma
         
-        std_z = torch.Tensor(sigma.shape).normal_()
+        std_z = torch.Tensor(sigma.shape).normal_().cuda()
         return mu + sigma * Variable(std_z, False)
         
     def forward(self, input):
@@ -70,6 +70,6 @@ class Autoencoder(nn.Module):
 
     
 if __name__ == '__main__':
-    AE = Autoencoder(2)
+    AE = VAE(2)
     x = torch.randn(100, 1, 32, 32)
     o = AE(x)

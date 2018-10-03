@@ -38,9 +38,9 @@ def get_optim(model, lr):
 def get_device():
     return 'cuda' if torch.cuda.is_available() else 'cpu'
 
-def show_process(epoch, step, step_per_epoch, loss_log):
-    print('Epoch [{}], Step [{}/{}], Loss [{:8f}]'.format(
-            epoch, step, step_per_epoch, loss_log[-1]))
+def show_process(epoch, step, step_per_epoch, loss_log, kl):
+    print('Epoch [{}], Step [{}/{}], Loss [{:8f}], KL Loss [{:8f}]'.format(
+            epoch, step, step_per_epoch, loss_log[-1], kl))
     return    
 
 def save_model(model, optim, logs, ckpt_dir, filename):
@@ -65,6 +65,11 @@ def random_generation(model, device, latent_dim, sample_dir):
     filename = os.path.join(sample_dir, 'random.png')
     torchvision.utils.save_image(output, filename, 10)
     return
+
+def kl_loss(z_mean, z_std):
+    z_mean_sqr = z_mean**2
+    z_std_sqr = z_std**2
+    return 0.5 * (z_mean_sqr + z_std_sqr - torch.log(z_std_sqr) - 1).mean()
 
 
     

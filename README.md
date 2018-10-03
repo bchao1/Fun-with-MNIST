@@ -59,6 +59,8 @@ nn.Sequential(
 Simple modifications or addition can be applied to the above templates to create different generative models. For example, in DCGAN generators, usually we apply a `Tanh` activation function at the output layer. 
 ### Deep autoencoders
 Autoencoders are relatively simple generative models compared to the state-of-the-art GANs. The basic idea is to project a high-dimensional vector (eg. an image) to a low-dimensional latent space, and then reconstruct the image based on this latent code representation.
+#### Structure
+![autoencoder](./img_src/autoencoder.png)
 #### Settings
 For comparison, I trained two autoencoders: one reconstructs images from 2-dimensional latent codes, the other from 100-dimensional latent codes. All models uses **Adam** optimizer with **betas = (0.5, 0.999), learning rate = 0.0002**.
 #### Results
@@ -84,7 +86,7 @@ We can also generate images on the 2-dimensional manifold. From the results belo
 |--------|-------|
 |![manifold](./AE/samples/2_dim/manifold.png)|![random](./AE/samples/2_dim/random.png)|
 
-Scatter plot for the 2-dimension manifold is seen below. Note that same digits tend to cluster in the latent space.  
+Scatter plot for the 2-dimension manifold is seen below. Note that code of the same digits tend to cluster in the latent space.  
 
 |Plot|
 |----|
@@ -114,5 +116,12 @@ Scatter plot of the 2D manifold.
 |Plot|
 |----|
 |![manifold scatter](./AE/samples/no_sig_reg/manifold_scatter.png)|
+***
+### VAE: Variational Autoencoder
+Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We then sample from the normal distribution characterized by mean and sigma (let this distribution be *Q*), and take this as the decoder input.
+#### Structure
+![VAE](./img_src/VAE.png)
+#### Loss design
+If we want to model the decoder input as an N(0,1) normal distribution, then we simply add a KL divergence loss between *N, Q* to the original autoencoder reconstruction loss.
 
 
