@@ -13,7 +13,7 @@ from ACGAN import Generator, Discriminator
 
 if __name__ == '__main__':
     
-    epochs = 200
+    epochs = 100
     batch_size = 100
     latent_dim = 100
     dataloader = utils.get_dataloader(batch_size)
@@ -35,8 +35,8 @@ if __name__ == '__main__':
     classifier_log = []
     
     discrim_criterion = nn.BCELoss()
-    aux_criterion = nn.CrossEntropyLoss()
-    
+    aux_criterion = nn.NLLLoss()
+
     for epoch_i in range(1, epochs + 1):
         for step_i, (real_img, class_label) in enumerate(dataloader):
             
@@ -90,12 +90,10 @@ if __name__ == '__main__':
             utils.show_process(epoch_i, step_i + 1, step_per_epoch, 
                                g_log, d_log, classifier_log)
             
-            if (step_i + 1) % 200 == 0:
-                utils.save_image(fake_img, 10, epoch_i, step_i + 1, sample_dir)
-                
-        utils.save_model(G, g_optim, g_log, checkpoint_dir, 'G.ckpt')
-        utils.save_model(D, d_optim, d_log, checkpoint_dir, 'D.ckpt')
-        utils.generate_classes(G, latent_dim , device, 10, epoch_i, sample_dir)
+        if epoch_i % 5 == 0:
+            utils.save_model(G, g_optim, g_log, checkpoint_dir, 'G.ckpt')
+            utils.save_model(D, d_optim, d_log, checkpoint_dir, 'D.ckpt')
+            utils.generate_classes(G, latent_dim , device, 10, epoch_i, sample_dir)
         
             
     

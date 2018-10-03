@@ -31,7 +31,7 @@ if __name__ == '__main__':
     
     loss_log = []
     
-    criterion = nn.MSELoss()
+    criterion = nn.BCELoss()
     
     result = None
     for epoch_i in range(1, epochs + 1):

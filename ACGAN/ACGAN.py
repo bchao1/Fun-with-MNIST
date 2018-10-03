@@ -63,7 +63,7 @@ class Discriminator(nn.Module):
         
         self.classifier = nn.Sequential(
                 nn.Linear(2048, self.class_dim),
-                nn.Softmax(dim = 1)
+                nn.LogSoftmax(dim = 1)
                 )
         
     def forward(self, _input):

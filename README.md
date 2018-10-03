@@ -121,9 +121,25 @@ Scatter plot of the 2D manifold.
 ***
 ### VAE: Variational Autoencoder
 Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We then sample from the normal distribution characterized by mean and sigma (let this distribution be *Q*), and take this as the decoder input.
+***
 #### Structure
 ![VAE](./img_src/VAE.png)
+***
 #### Loss design
-If we want to model the decoder input as an N(0,1) normal distribution, then we simply add a KL divergence loss between *N, Q* to the original autoencoder reconstruction loss.
-#### Results
+If we want to model the decoder input as an N(0,1) normal distribution, then we simply add a **KL divergence** loss between *N, Q* to the original autoencoder reconstruction loss.
 
+![vae loss](./img_src/vae_kl_loss.png)
+#### Results
+***
+### GAN: Generative Adversarial Networks
+#### Algorithm
+![gan_loss](./img_src/gan_algo.png)
+***
+### ACGAN: Auxiliary Classifier GANs
+In ACGAN, the discriminator not only learns to distinguish fake and real images, but also tries to classify the images. This allows us to disentangle the class information and generate images conditionally.
+***
+#### Structure
+![acgan](./img_src/acgan.png)
+***
+#### Loss design
+![acgan loss](./img_src/acgan_loss.png)

@@ -65,19 +65,20 @@ def to_onehot(labels, classes):
         onehot[i][labels[i]] = 1
     return onehot
 
-def generate_classes(model, latent_dim, device, num_classes, epoch, sample_dir):
-    class_label = np.random.randint(num_classes)
-    class_vec = torch.zeros(num_classes).to(device)
-    class_vec[class_label] = 1
-    class_vec.unsqueeze_(0)
+def generate_classes(model, latent_dim, device, num_classes, epoch, sample_dir):  
     
     images = []
-    for i in range(100):
-        z = torch.randn(latent_dim).unsqueeze(0).to(device)
-        output = model(z, class_vec)
-        images.append(output)
+    for i in range(num_classes):
+        class_vec = torch.zeros(num_classes).to(device)
+        class_vec[i] = 1
+        class_vec.unsqueeze_(0)
+        for _ in range(10):
+            z = torch.randn(latent_dim).unsqueeze(0).to(device)
+            output = model(z, class_vec)
+            images.append(output)
+            
     images = torch.cat(images, 0)
-    filename = 'epoch_{}_class_{}.png'.format(epoch, class_label)
+    filename = 'epoch_{}.png'.format(epoch)
     torchvision.utils.save_image(images, os.path.join(sample_dir, filename), 
                                  nrow = 10)
     return

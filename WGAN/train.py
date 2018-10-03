@@ -5,11 +5,13 @@ Created on Tue Oct  2 17:51:41 2018
 @author: USER
 """
 
+import os
 import torch
 import torch.nn as nn
 import numpy as np
 import utils
-from GAN import Generator, Discriminator
+from WGAN import Generator, Discriminator
+import torchvision
 
 if __name__ == '__main__':
     
@@ -37,6 +39,7 @@ if __name__ == '__main__':
     
     criterion = nn.BCELoss()
     
+    fix_z = torch.randn(batch_size, latent_dim).to(device)
     for epoch_i in range(1, epochs + 1):
         for step_i, (real_img, _) in enumerate(dataloader):
             
@@ -79,8 +82,14 @@ if __name__ == '__main__':
             g_log.append(g_loss.item())
             
             utils.show_process(epoch_i, step_i + 1, step_per_epoch, g_log, d_log)
-            if (step_i + 1) % 200 == 0:
-                utils.save_image(fake_img, 10, epoch_i, step_i + 1, sample_dir)
+            
+        if epoch_i == 1:
+            torchvision.utils.save_image(real_img, 
+                                         os.path.join(sample_dir, 'real.png'),
+                                         nrow = 10)
+        if epoch_i % 5 == 0:
+            fake_img = G(fix_z)
+            utils.save_image(fake_img, 10, epoch_i, step_i + 1, sample_dir)
                 
         utils.save_model(G, g_optim, g_log, checkpoint_dir, 'G.ckpt')
         utils.save_model(D, d_optim, d_log, checkpoint_dir, 'D.ckpt')

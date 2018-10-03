@@ -38,9 +38,9 @@ def get_optim(model, lr):
 def get_device():
     return 'cuda' if torch.cuda.is_available() else 'cpu'
 
-def show_process(epoch, step, step_per_epoch, g_log, d_log, classifier_log):
-    print('Epoch [{}], Step [{}/{}], Losses: G [{:8f}], D [{:8f}], Classifier[{:8f}]'.format(
-            epoch, step, step_per_epoch, g_log[-1], d_log[-1], classifier_log[-1]))
+def show_process(epoch, step, step_per_epoch, g_log, d_log):
+    print('Epoch [{}], Step [{}/{}], Losses: G [{:8f}], D [{:8f}]'.format(
+            epoch, step, step_per_epoch, g_log[-1], d_log[-1]))
     return    
 
 def save_model(model, optim, logs, ckpt_dir, filename):
