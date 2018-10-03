@@ -57,5 +57,5 @@ class Autoencoder(nn.Module):
     
 if __name__ == '__main__':
     AE = Autoencoder(2)
-    x = torch.randn(100, 1, 32, 32)
-    o = AE(x)
+    data = torch.randn(1000, 1, 32, 32)
+    o = AE.encoder(data)

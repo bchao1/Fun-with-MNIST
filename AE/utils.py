@@ -13,6 +13,11 @@ from torchvision.datasets import MNIST
 import torchvision.transforms as transforms
 import torchvision
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+color_code = ['#D9E500', '#E0A200', '#DC5600', '#D80C00', '#89E000', 
+              '#CF007D', '#CB00BE', '#9200C7', '#4E00C3', '#0E00BF']
 
 def get_dataloader(batch_size):
     transform = transforms.Compose([
@@ -81,7 +86,25 @@ def manifold_walk(model, steps, sample_dir):
     return
 
 def L2_reg(code):
-    return code.squeeze().norm(dim = 2)
+    return code.view(-1).norm(p = 2).mean()
 
-
+def plot_manifold(encoder, dataset, num_points, sample_dir):
+    plt.figure(figsize=(6, 6), dpi=100)
+    labels = []
+    data = []
+    for i in range(num_points):
+        img, label = dataset.__getitem__(i)
+        labels.append(label)
+        data.append(img.unsqueeze(0))
+    data = torch.cat(data, 0)
+    code = encoder(data).squeeze()
+    x, y = code.detach().numpy().transpose()
+    for i in range(num_points):
+        plt.scatter(x[i], y[i], marker = '.', c = color_code[labels[i]])
+    
+    patches = []
+    for i in range(len(color_code)):
+        patches.append(mpatches.Patch(color=color_code[i], label=i))
+    plt.legend(handles = patches)
+    plt.savefig(os.path.join(sample_dir, 'manifold_scatter.png'))
     
