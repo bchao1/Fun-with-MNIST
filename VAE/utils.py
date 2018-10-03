@@ -66,22 +66,5 @@ def random_generation(model, device, latent_dim, sample_dir):
     torchvision.utils.save_image(output, filename, 10)
     return
 
-def manifold_walk(model, steps, sample_dir):
-    results = []
-    for i in np.linspace(0, 1, steps + 1):
-        for j in np.linspace(0, 1, steps + 1):
-            code = torch.zeros(1, 2, 1, 1)
-            code[:, 0, :, :] = i
-            code[:, 1, :, :] = j
-            results.append(code)
-    results = torch.cat(results)
-    output = model(results)
-    filename = os.path.join(sample_dir, 'manifold.png')
-    torchvision.utils.save_image(output, filename, steps + 1)
-    return
-
-def L2_reg(code):
-    return code.squeeze().norm(dim = 2)
-
 
     

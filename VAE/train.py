@@ -17,8 +17,7 @@ if __name__ == '__main__':
     
     epochs = 50
     batch_size = 100
-    latent_dim = 2
-    reg = True
+    latent_dim = 100
     dataloader = utils.get_dataloader(batch_size)
     device = utils.get_device()
     step_per_epoch = np.ceil(dataloader.dataset.__len__() / batch_size)
@@ -27,7 +26,7 @@ if __name__ == '__main__':
     
     utils.makedirs(sample_dir, checkpoint_dir)
     
-    net = Autoencoder(latent_dim = latent_dim, enc_sig = False).to(device)
+    net = Autoencoder().to(device)
     optim = utils.get_optim(net, 0.0002)
     
     loss_log = []
@@ -41,17 +40,9 @@ if __name__ == '__main__':
             
             if result is None:
                 result = real_img
-            
-            code = net.encoder(real_img)
-            
-            reg_loss = 0
-            if reg:
-                reg_loss = utils.L2_reg(code)
-            
-            reconstructed = net.decoder(code)
-            
-            reconstruction_loss = criterion(reconstructed, real_img)
-            loss = reg_loss + reconstruction_loss
+                
+            reconstructed = net(real_img)
+            loss = criterion(reconstructed, real_img)
             
             optim.zero_grad()
             loss.backward()

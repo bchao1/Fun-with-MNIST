@@ -7,9 +7,10 @@ Created on Tue Oct  2 17:21:27 2018
 
 import torch
 import torch.nn as nn
+from torch.autograd import Variable
 
 class Autoencoder(nn.Module):
-    def __init__(self, latent_dim = 100, enc_sig = True):
+    def __init__(self, latent_dim = 100):
         super(Autoencoder, self).__init__()
         
         self.latent_dim = latent_dim
@@ -25,11 +26,11 @@ class Autoencoder(nn.Module):
                 nn.Conv2d(256, 512, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(512),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(512, self.latent_dim, 2, 1)
+                nn.Conv2d(512, 1024, 2, 1),
+                nn.LeakyReLU(0.2)
                 )
-        
-        if enc_sig:
-            self.encoder.add_module('sigmoid', nn.Sigmoid())
+        self.enc_log_sigma = nn.Linear(1024, self.latent_dim)
+        self.enc_mu = nn.Linear(1024, self.latent_dim)
         
         self.decoder = nn.Sequential(
                 nn.ConvTranspose2d(self.latent_dim, 512, 4, 2, 1, bias = False),
@@ -48,11 +49,24 @@ class Autoencoder(nn.Module):
                 nn.Sigmoid()
                 )
         
+    def sample_latent(self, mu, log_sigma):
+        sigma = torch.exp(log_sigma)
+        
+        self.z_mean = mu
+        self.z_sigma = sigma
+        
+        std_z = torch.Tensor(sigma.shape).normal_()
+        return mu + sigma * Variable(std_z, False)
+        
     def forward(self, input):
         code = self.encoder(input)
-        print(code.shape)
-        reconstructed = self.decoder(code)
-        return reconstructed
+        flatten = code.view(-1, 1024)
+        
+        sigma = self.enc_log_sigma(flatten)
+        mu = self.enc_mu(flatten)
+        
+        z = self.sample_latent(mu, sigma).unsqueeze_(2).unsqueeze_(3)
+        return self.decoder(z)
 
     
 if __name__ == '__main__':
