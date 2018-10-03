@@ -128,7 +128,7 @@ Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We
 #### Loss design
 If we want to model the decoder input as an N(0,1) normal distribution, then we simply add a **KL divergence** loss between *N, Q* to the original autoencoder reconstruction loss.
 
-![vae loss](./img_src/vae_kl_loss.png)
+![vae loss](./img_src/vae_kl_loss.PNG)
 #### Results
 ***
 ### GAN: Generative Adversarial Networks
@@ -146,4 +146,4 @@ In ACGAN, the discriminator not only learns to distinguish fake and real images,
 ![acgan](./img_src/acgan.png)
 ***
 #### Loss design
-![acgan loss](./img_src/acgan_loss.png)
+![acgan loss](./img_src/acgan_loss.PNG)
