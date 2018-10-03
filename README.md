@@ -84,10 +84,11 @@ We can also generate images on the 2-dimensional manifold. From the results belo
 |--------|-------|
 |![manifold](./AE/samples/2_dim/manifold.png)|![random](./AE/samples/2_dim/random.png)|
 
-Scatter plot for the 2-dimension manifold is seen below. Note that same digits tend to cluster in the latent space.
+Scatter plot for the 2-dimension manifold is seen below. Note that same digits tend to cluster in the latent space.  
+
 |Plot|
 |----|
-|![manifold scatter](./AE/samples/2_dim/manifold_scatter.png)
+|![manifold scatter](./AE/samples/2_dim/manifold_scatter.png)|
 
 ***
 Below are the resonctruction results after 50 epochs with the sigmoid activation removed from the encoder.
@@ -96,10 +97,11 @@ Below are the resonctruction results after 50 epochs with the sigmoid activation
 | ------ | ------------|
 |![orig](./AE/samples/no_sig_no_reg/orig.png)|![orig](./AE/samples/no_sig_no_reg/epoch_50_step_600.png)|
 
-Scatter plot of the 2D manifold.
+Scatter plot of the 2D manifold.  
+
 |Plot|
 |----|
-|![manifold scatter](./AE/samples/no_sig_no_reg/manifold_scatter.png)
+|![manifold scatter](./AE/samples/no_sig_no_reg/manifold_scatter.png)|
 ***
 After adding L2 regularization of the latent codes to the loss (weight = 0.2), we can see the codes are restricted around 0.
 
@@ -107,9 +109,10 @@ After adding L2 regularization of the latent codes to the loss (weight = 0.2), w
 | ------ | ------------|
 |![orig](./AE/samples/no_sig_reg/orig.png)|![orig](./AE/samples/no_sig_reg/epoch_50_step_600.png)|
 
-Scatter plot of the 2D manifold.
+Scatter plot of the 2D manifold.  
+
 |Plot|
 |----|
-|![manifold scatter](./AE/samples/no_sig_reg/manifold_scatter.png)
+|![manifold scatter](./AE/samples/no_sig_reg/manifold_scatter.png)|
 
 
