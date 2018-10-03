@@ -16,18 +16,18 @@ class VAE(nn.Module):
         self.latent_dim = latent_dim
         self.encoder = nn.Sequential(
                 nn.Conv2d(1, 64, 4, 2, 1, bias = False),
-                nn.LeakyReLU(0.2),
+                nn.LeakyReLU(0.005, True),
                 nn.Conv2d(64, 128, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(128),
-                nn.LeakyReLU(0.2),
+                nn.LeakyReLU(0.005, True),
                 nn.Conv2d(128, 256, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(256),
-                nn.LeakyReLU(0.2),
+                nn.LeakyReLU(0.005, True),
                 nn.Conv2d(256, 512, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(512),
-                nn.LeakyReLU(0.2),
+                nn.LeakyReLU(0.005, True),
                 nn.Conv2d(512, 1024, 2, 1),
-                nn.LeakyReLU(0.2)
+                nn.LeakyReLU(0.005, True)
                 )
         self.enc_log_sigma = nn.Linear(1024, self.latent_dim)
         self.enc_mu = nn.Linear(1024, self.latent_dim)
@@ -35,16 +35,16 @@ class VAE(nn.Module):
         self.decoder = nn.Sequential(
                 nn.ConvTranspose2d(self.latent_dim, 512, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(512),
-                nn.ReLU(),
+                nn.LeakyReLU(0.01, True),
                 nn.ConvTranspose2d(512, 256, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(256),
-                nn.ReLU(),
+                nn.LeakyReLU(0.01, True),
                 nn.ConvTranspose2d(256, 128, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(128),
-                nn.ReLU(),
+                nn.LeakyReLU(0.01, True),
                 nn.ConvTranspose2d(128, 64, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(64),
-                nn.ReLU(),
+                nn.LeakyReLU(0.01, True),
                 nn.ConvTranspose2d(64, 1, 4, 2, 1, bias = False),
                 nn.Sigmoid()
                 )
@@ -56,6 +56,7 @@ class VAE(nn.Module):
         self.z_sigma = sigma
         
         std_z = torch.Tensor(sigma.shape).normal_().cuda()
+        
         return mu + sigma * Variable(std_z, False)
         
     def forward(self, input):

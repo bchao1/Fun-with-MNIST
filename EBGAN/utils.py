@@ -57,6 +57,28 @@ def save_image(img, nrow, epoch, step, sample_dir):
     file_path = os.path.join(sample_dir, filename)
     torchvision.utils.save_image(img, file_path, nrow)
     return
+
+def to_onehot(labels, classes):
+    batch_size = labels.shape[0]
+    onehot = torch.zeros(batch_size, classes)
+    for i in range(batch_size):
+        onehot[i][labels[i]] = 1
+    return onehot
+
+def generate_classes(model, latent_dim, device, num_classes, epoch, sample_dir):
+    class_label = np.random.randint(num_classes)
+    class_vec = torch.zeros(num_classes).to(device)
+    class_vec[class_label] = 1
+    images = []
+    for i in range(100):
+        z = torch.randn(latent_dim).to(device)
+        output = model(z, class_vec)
+        images.append(output)
+    images = torch.cat(images, 0)
+    filename = 'epoch_{}_class_{}.png'.format(epoch, class_label)
+    torchvision.utils.save_image(images, os.path.join(sample_dir, filename), 
+                                 nrow = 10)
+    return
         
     
     

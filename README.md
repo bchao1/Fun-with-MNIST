@@ -56,7 +56,9 @@ nn.Sequential(
                 nn.Sigmoid()
                 )
 ```
-Simple modifications or addition can be applied to the above templates to create different generative models. For example, in DCGAN generators, usually we apply a `Tanh` activation function at the output layer. 
+Simple modifications or addition can be applied to the above templates to create different generative models. For example, in DCGAN generators, usually we apply a `Tanh` activation function at the output layer.  
+
+You can also try simple fully-connected networks and compare the performance with CNN-based models.
 ### Deep autoencoders
 Autoencoders are relatively simple generative models compared to the state-of-the-art GANs. The basic idea is to project a high-dimensional vector (eg. an image) to a low-dimensional latent space, and then reconstruct the image based on this latent code representation.
 #### Structure
@@ -105,7 +107,7 @@ Scatter plot of the 2D manifold.
 |----|
 |![manifold scatter](./AE/samples/no_sig_no_reg/manifold_scatter.png)|
 ***
-After adding L2 regularization of the latent codes to the loss (weight = 0.2), we can see the codes are restricted around 0.
+After adding L2 regularization of the latent codes to the loss (weight = 0.2), we can see the codes are restricted around to a small region.
 
 |Original|Reconstructed|
 | ------ | ------------|
@@ -123,5 +125,5 @@ Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We
 ![VAE](./img_src/VAE.png)
 #### Loss design
 If we want to model the decoder input as an N(0,1) normal distribution, then we simply add a KL divergence loss between *N, Q* to the original autoencoder reconstruction loss.
-
+#### Results
 

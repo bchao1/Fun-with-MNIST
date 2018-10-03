@@ -33,14 +33,14 @@ def makedirs(sample_dir, checkpoint_dir):
         os.makedirs(checkpoint_dir)
 
 def get_optim(model, lr):
-    return optim.Adam(model.parameters(), betas = [0.5, 0.999], lr = lr)
+    return optim.RMSprop(model.parameters(), lr = lr)
 
 def get_device():
     return 'cuda' if torch.cuda.is_available() else 'cpu'
 
-def show_process(epoch, step, step_per_epoch, g_log, d_log, classifier_log):
-    print('Epoch [{}], Step [{}/{}], Losses: G [{:8f}], D [{:8f}], Classifier[{:8f}]'.format(
-            epoch, step, step_per_epoch, g_log[-1], d_log[-1], classifier_log[-1]))
+def show_process(epoch, step, step_per_epoch, g_log, d_log):
+    print('Epoch [{}], Step [{}/{}], Losses: G [{:8f}], D [{:8f}]'.format(
+            epoch, step, step_per_epoch, g_log[-1], d_log[-1]))
     return    
 
 def save_model(model, optim, logs, ckpt_dir, filename):
@@ -57,8 +57,10 @@ def save_image(img, nrow, epoch, step, sample_dir):
     file_path = os.path.join(sample_dir, filename)
     torchvision.utils.save_image(img, file_path, nrow)
     return
-        
-    
-    
+
+def clip_weights(model, c):
+    for p in model.parameters():
+        p.data.clamp_(-c, c)
+    return
     
     
