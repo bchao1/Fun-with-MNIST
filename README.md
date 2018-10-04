@@ -13,12 +13,13 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |Vanilla Autoencoders|https://www.cs.toronto.edu/~hinton/science.pdf|
 |VAE: Variational Autoencoder|https://arxiv.org/abs/1312.6114|
 |GAN: Generative Adversarial Networks|https://arxiv.org/abs/1406.2661|
+|Adversarial Autoencoders|https://arxiv.org/abs/1511.05644|
 |WGAN: Wasserstein's GAN|https://arxiv.org/abs/1701.07875|
 |WGAN-GP: Improved Wasserstein's GAN|https://arxiv.org/abs/1704.00028|
 |InfoGAN: Information maximizing GAN|https://arxiv.org/abs/1606.03657|
 |ACGAN: Auxiliary Classifier GAN|https://arxiv.org/abs/1610.09585|
 |Conditional GAN|https://arxiv.org/abs/1411.1784|
-|VAE-GAN: Adversarial Autoencoders|https://arxiv.org/abs/1511.05644|
+|VAE-GAN: VAE + GAN|https://arxiv.org/abs/1512.09300|
 |BEGAN: Boundary Equilibrium GAN|https://arxiv.org/abs/1703.10717|
 |EBGAN: Energy-based GAN|https://arxiv.org/abs/1609.03126|
 |LSGAN: Least Squares GAN|https://arxiv.org/abs/1611.04076|
@@ -163,7 +164,9 @@ An (allegedly) more stable GAN model. Rather than minimizing the JS divergence b
 #### Algorithm
 ![wgan](./img_src/wgan_algo.png)
 #### Results
-
+|Real images|Generated|
+| ------ | ------------|
+|![real](./GAN/samples/real.png)|![fake](./WGAN/samples/process.gif)|
 ***
 ***
 ### ACGAN: Auxiliary Classifier GANs
