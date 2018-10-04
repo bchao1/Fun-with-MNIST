@@ -11,7 +11,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |Model|Reference|
 |-----|---------|
 |Vanilla Autoencoders|https://www.cs.toronto.edu/~hinton/science.pdf|
-|VAE: Variational Autoencoderhttps://arxiv.org/abs/1312.6114||
+|VAE: Variational Autoencoder|https://arxiv.org/abs/1312.6114|
 |GAN: Generative Adversarial Networks|https://arxiv.org/abs/1406.2661|
 |WGAN: Wasserstein's GAN|https://arxiv.org/abs/1701.07875|
 |WGAN-GP: Improved Wasserstein's GAN|https://arxiv.org/abs/1704.00028|
@@ -19,9 +19,9 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |ACGAN: Auxiliary Classifier GAN|https://arxiv.org/abs/1610.09585|
 |Conditional GAN|https://arxiv.org/abs/1411.1784|
 |VAE-GAN: Adversarial Autoencoders|https://arxiv.org/abs/1511.05644|
-|BEGAN|https://arxiv.org/abs/1703.10717|
-|EBGAN|https://arxiv.org/abs/1609.03126|
-|LSGAN|https://arxiv.org/abs/1611.04076|
+|BEGAN: Boundary Equilibrium GAN|https://arxiv.org/abs/1703.10717|
+|EBGAN: Energy-based GAN|https://arxiv.org/abs/1609.03126|
+|LSGAN: Least Squares GAN|https://arxiv.org/abs/1611.04076|
 
 - Others
 
