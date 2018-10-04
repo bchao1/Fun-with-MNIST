@@ -119,6 +119,7 @@ Scatter plot of the 2D manifold.
 |----|
 |![manifold scatter](./AE/samples/no_sig_reg/manifold_scatter.png)|
 ***
+***
 ### VAE: Variational Autoencoder
 Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We then sample from the normal distribution characterized by mean and sigma (let this distribution be *Q*), and take this as the decoder input.
 ***
@@ -131,7 +132,11 @@ If we want to model the decoder input as an N(0,1) normal distribution, then we 
 ![vae loss](./img_src/vae_kl_loss.PNG)
 #### Results
 ***
+***
 ### GAN: Generative Adversarial Networks
+The groundwork for most generative models today, GANs are generally composed of two actors, a Generator and a Discriminator, who play a zero-sum game. The discriminator tries to distinguish real and synthesized images, while the generator learns to create images that fool the discriminator.
+#### Structure
+![gan](./img_src/gan.png)
 #### Algorithm
 ![gan_loss](./img_src/gan_algo.png)
 #### Results
@@ -139,11 +144,21 @@ If we want to model the decoder input as an N(0,1) normal distribution, then we 
 | ------ | ------------|
 |![real](./GAN/samples/real.png)|![fake](./GAN/samples/process.gif)|
 ***
+***
 ### ACGAN: Auxiliary Classifier GANs
-In ACGAN, the discriminator not only learns to distinguish fake and real images, but also tries to classify the images. This allows us to disentangle the class information and generate images conditionally.
+In ACGAN, the discriminator not only learns to distinguish fake and real images, but also tries to classify the image into correct labels. We can then manipulate the disentangled latent code and generate images conditioned on their class.
 ***
 #### Structure
 ![acgan](./img_src/acgan.png)
+
+The class information is usually representated by a one-hot encoding and then fed to the generator.
 ***
 #### Loss design
 ![acgan loss](./img_src/acgan_loss.PNG)
+***
+#### Results
+|Fixing noise|Generated|
+| ------ | ------------|
+|![real](./ACGAN/samples/fix_noise.png)|![fake](./ACGAN/samples/process.gif)|
+
+When we fix the noise and only change the class labels, we can see that ACGAN generates images from different classes but similar overall structure (eg. thickness, tilt, rotation...).

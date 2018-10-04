@@ -8,7 +8,8 @@ Created on Tue Oct  2 17:51:41 2018
 import torch
 import torch.nn as nn
 import numpy as np
-import utils
+import utils.general as utils
+import utils.acgan as acgan_utils
 from ACGAN import Generator, Discriminator
 
 if __name__ == '__main__':
@@ -35,7 +36,7 @@ if __name__ == '__main__':
     classifier_log = []
     
     discrim_criterion = nn.BCELoss()
-    aux_criterion = nn.NLLLoss()
+    aux_criterion = nn.CrossEntropyLoss()
 
     for epoch_i in range(1, epochs + 1):
         for step_i, (real_img, class_label) in enumerate(dataloader):
@@ -93,11 +94,9 @@ if __name__ == '__main__':
         if epoch_i % 5 == 0:
             utils.save_model(G, g_optim, g_log, checkpoint_dir, 'G.ckpt')
             utils.save_model(D, d_optim, d_log, checkpoint_dir, 'D.ckpt')
-            utils.generate_classes(G, latent_dim , device, 10, epoch_i, sample_dir)
+            acgan_utils.generate_classes(G, latent_dim , device, 10, epoch_i, sample_dir)
         
-            
-    
-    
+    acgan_utils.fix_noise(G, latent_dim, device, 10, sample_dir)
     
     
     

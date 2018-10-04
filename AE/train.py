@@ -9,7 +9,8 @@ import os
 import torch
 import torch.nn as nn
 import numpy as np
-import utils
+import utils.general as utils
+import utils.autoencoder as ae_utils
 from Autoencoder import Autoencoder
 import torchvision
 
@@ -46,7 +47,7 @@ if __name__ == '__main__':
             
             reg_loss = 0
             if reg:
-                reg_loss = utils.L2_reg(code)
+                reg_loss = ae_utils.L2_reg(code)
             
             reconstructed = net.decoder(code)
             
@@ -58,7 +59,7 @@ if __name__ == '__main__':
             optim.step()
             loss_log.append(loss.item())
             
-            utils.show_process(epoch_i, step_i + 1, step_per_epoch, loss_log)
+            ae_utils.show_process(epoch_i, step_i + 1, step_per_epoch, loss_log)
             
         if epoch_i == 1:
             torchvision.utils.save_image(result, 
