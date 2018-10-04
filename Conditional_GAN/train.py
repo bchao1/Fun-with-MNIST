@@ -9,8 +9,8 @@ import os
 import torch
 import torch.nn as nn
 import numpy as np
-import utils.general as utils
-from GAN import Generator, Discriminator
+import utils
+from Conditional_GAN import Generator, Discriminator
 import torchvision
 
 if __name__ == '__main__':
@@ -36,27 +36,30 @@ if __name__ == '__main__':
     d_log = []
     
     criterion = nn.BCELoss()
-    
-    fix_z = torch.randn(batch_size, latent_dim).to(device)
     for epoch_i in range(1, epochs + 1):
-        for step_i, (real_img, _) in enumerate(dataloader):
+        for step_i, (real_img, class_label) in enumerate(dataloader):
             
             real_labels = torch.ones(batch_size).to(device)
             fake_labels = torch.zeros(batch_size).to(device)
+            onehot_class = utils.to_onehot(class_label, 10).to(device)
             
+            mismatch_label = utils.get_label_mismatch(class_label, 10)
+            mismatch_class = utils.to_onehot(mismatch_label, 10)
             # Train D
             
             real_img = real_img.to(device)
             z = torch.randn(batch_size, latent_dim).to(device)
-            fake_img = G(z)
+            fake_img = G(z, onehot_class)
             
-            real_score = D(real_img)
-            fake_score = D(fake_img)
+            real_img_right_class = D(real_img, onehot_class)
+            real_img_wrong_class = D(real_img, mismatch_class)
+            fake_img_right_class = D(fake_img, onehot_class)
             
-            real_loss = criterion(real_score, real_labels)
-            fake_loss = criterion(fake_score, fake_labels)
+            right_loss = criterion(real_img_right_class, real_labels)
+            wrong_loss = (criterion(fake_img_right_class, fake_labels) + 
+                         criterion(real_img_wrong_class, fake_labels)) * 0.5
             
-            d_loss = real_loss + fake_loss
+            d_loss = right_loss + wrong_loss
             
             d_optim.zero_grad()
             d_loss.backward()
@@ -66,9 +69,9 @@ if __name__ == '__main__':
             # Train G
             
             z = torch.randn(batch_size, latent_dim).to(device)
-            fake_img = G(z)
+            fake_img = G(z, onehot_class)
             
-            fake_score = D(fake_img)
+            fake_score = D(fake_img, onehot_class)
             
             g_loss = criterion(fake_score, real_labels)
             
@@ -83,12 +86,10 @@ if __name__ == '__main__':
             torchvision.utils.save_image(real_img, 
                                          os.path.join(sample_dir, 'real.png'),
                                          nrow = 10)
-        if epoch_i % 5 == 0:
-            fake_img = G(fix_z)
-            utils.save_image(fake_img, 10, epoch_i, step_i + 1, sample_dir)
                 
         utils.save_model(G, g_optim, g_log, checkpoint_dir, 'G.ckpt')
         utils.save_model(D, d_optim, d_log, checkpoint_dir, 'D.ckpt')
+        utils.generate_classes(G, latent_dim, device, 10, epoch_i, sample_dir)
         
             
     

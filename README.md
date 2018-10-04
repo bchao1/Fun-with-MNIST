@@ -7,15 +7,28 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
     - PCA on MNIST
 
 - Generative Models
-    - Vanilla Autoencoders
-    - VAE: Variational Autoencoder
-    - GAN: Generative Adversarial Networks
-    - WGAN: Wasserstein's GAN
-    - WGAN-GP: Improved Wasserstein's GAN
-    - InfoGAN: Information maximizing GAN
-    - ACGAN: Auxiliary Classifier GAN
-    - Conditional GAN
-- Transfer Learning
+
+|Model|Reference|
+|-----|---------|
+|Vanilla Autoencoders|https://www.cs.toronto.edu/~hinton/science.pdf|
+|VAE: Variational Autoencoderhttps://arxiv.org/abs/1312.6114||
+|GAN: Generative Adversarial Networks|https://arxiv.org/abs/1406.2661|
+|WGAN: Wasserstein's GAN|https://arxiv.org/abs/1701.07875|
+|WGAN-GP: Improved Wasserstein's GAN|https://arxiv.org/abs/1704.00028|
+|InfoGAN: Information maximizing GAN|https://arxiv.org/abs/1606.03657|
+|ACGAN: Auxiliary Classifier GAN|https://arxiv.org/abs/1610.09585|
+|Conditional GAN|https://arxiv.org/abs/1411.1784|
+|VAE-GAN: Adversarial Autoencoders|https://arxiv.org/abs/1511.05644|
+|BEGAN|https://arxiv.org/abs/1703.10717|
+|EBGAN|https://arxiv.org/abs/1609.03126|
+|LSGAN|https://arxiv.org/abs/1611.04076|
+
+- Others
+
+|Topic|Reference|
+|-----|---------|
+|Semi-supervied learning with SGAN|https://arxiv.org/abs/1606.01583|
+|Transfer Learning||
 
 ## Generative Models
 In the following generative models, almost all of them are modified from the following model architecture:
@@ -122,12 +135,12 @@ Scatter plot of the 2D manifold.
 ***
 ### VAE: Variational Autoencoder
 Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We then sample from the normal distribution characterized by mean and sigma (let this distribution be *Q*), and take this as the decoder input.
-***
+
 #### Structure
 ![VAE](./img_src/VAE.png)
-***
+
 #### Loss design
-If we want to model the decoder input as an N(0,1) normal distribution, then we simply add a **KL divergence** loss between *N, Q* to the original autoencoder reconstruction loss.
+Usually the decoder input is sampled from a N(0,1) normal distribution. We can simply add a **KL divergence** loss between *N, Q* to the original autoencoder reconstruction loss so as to match *Q* with the desired *N* distribution.
 
 ![vae loss](./img_src/vae_kl_loss.PNG)
 #### Results
@@ -145,20 +158,28 @@ The groundwork for most generative models today, GANs are generally composed of 
 |![real](./GAN/samples/real.png)|![fake](./GAN/samples/process.gif)|
 ***
 ***
+### WGAN: Wasserstein's GAN
+An (allegedly) more stable GAN model. Rather than minimizing the JS divergence between the prior training dats distribution and the generated data distribution as in GAN, WGAN minimizes the **Wasserstein's** distance. 
+#### Algorithm
+![wgan](./img_src/wgan_algo.png)
+#### Results
+
+***
+***
 ### ACGAN: Auxiliary Classifier GANs
 In ACGAN, the discriminator not only learns to distinguish fake and real images, but also tries to classify the image into correct labels. We can then manipulate the disentangled latent code and generate images conditioned on their class.
-***
+
 #### Structure
 ![acgan](./img_src/acgan.png)
 
-The class information is usually representated by a one-hot encoding and then fed to the generator.
-***
+The class information is usually representated by a one-hot encoding. It is then concatenated with a noise vector and fed to the generator.
+
 #### Loss design
 ![acgan loss](./img_src/acgan_loss.PNG)
-***
+
 #### Results
 |Fixing noise|Generated|
 | ------ | ------------|
 |![real](./ACGAN/samples/fix_noise.png)|![fake](./ACGAN/samples/process.gif)|
 
-When we fix the noise and only change the class labels, we can see that ACGAN generates images from different classes but similar overall structure (eg. thickness, tilt, rotation...).
+When we fix the noise vector and only change the class label vector, ACGAN generates images from different classes but similar overall structure (eg. thickness, tilt, rotation...).
