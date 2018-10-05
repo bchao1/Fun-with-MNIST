@@ -206,10 +206,12 @@ By simply providing extra information (eg. class labels) to both the discriminat
 
 #### Struture
 ![conditional gan](./img_src/conditional_gan.PNG)
+
 The conditional information can come in many forms. For simple multi-class labels, usually we just feed the networks with one-hot encodings. For more complex conditions such as text, we can train a better embedding (eg. word2vec), and the embedded code will be our condition.
 
 #### Objective
 ![conditional gan loss](./img_src/cgan_loss.PNG)
+
 Note that the loss is nearly identical to the original GAN loss, only that it is contioned on some prior knowledge *y*.
 
 #### Results
