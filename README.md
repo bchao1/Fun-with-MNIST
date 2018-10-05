@@ -32,7 +32,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |Transfer Learning||
 
 ## Generative Models
-In the following generative models, almost all of them are modified from the following model architecture:
+In the following generative models, some of them are modified from the following model architecture (DCGAN-like):
 ```python
 // Example: Autoencoder structure
 // Downsampling network (eg. Encoder, Discriminator)
@@ -70,15 +70,13 @@ nn.Sequential(
                 nn.Sigmoid()
                 )
 ```
-Simple modifications or addition can be applied to the above templates to create different generative models. For example, in DCGAN generators, usually we apply a `Tanh` activation function at the output layer.  
+Some models are just simple fully-connected layers. I did not replicate all settings in the orignal papers since it is more important to capture the overall concept.
 
-You can also try simple fully-connected networks and compare the performance with CNN-based models.
 ### Deep autoencoders
 Autoencoders are relatively simple generative models compared to the state-of-the-art GANs. The basic idea is to project a high-dimensional vector (eg. an image) to a low-dimensional latent space, and then reconstruct the image based on this latent code representation.
 #### Structure
 ![autoencoder](./img_src/autoencoder.png)
-#### Settings
-For comparison, I trained two autoencoders: one reconstructs images from 2-dimensional latent codes, the other from 100-dimensional latent codes. All models uses **Adam** optimizer with **betas = (0.5, 0.999), learning rate = 0.0002**.
+
 #### Results
 Reconstruction from 100 dimension latent code.  
 
@@ -140,7 +138,7 @@ Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We
 #### Structure
 ![VAE](./img_src/VAE.png)
 
-#### Loss design
+#### Objective
 Usually the decoder input is sampled from a N(0,1) normal distribution. We can simply add a **KL divergence** loss between *N, Q* to the original autoencoder reconstruction loss so as to match *Q* with the desired *N* distribution.
 
 ![vae loss](./img_src/vae_kl_loss.PNG)
@@ -151,12 +149,27 @@ Usually the decoder input is sampled from a N(0,1) normal distribution. We can s
 The groundwork for most generative models today, GANs are generally composed of two actors, a Generator and a Discriminator, who play a zero-sum game. The discriminator tries to distinguish real and synthesized images, while the generator learns to create images that fool the discriminator.
 #### Structure
 ![gan](./img_src/gan.png)
+
 #### Algorithm
 ![gan_loss](./img_src/gan_algo.png)
+
 #### Results
 |Real images|Generated|
 | ------ | ------------|
 |![real](./GAN/samples/real.png)|![fake](./GAN/samples/process.gif)|
+***
+***
+### Adversarial Autoencoders
+Similar to VAE(Variational Autoencoders), the encoder in Adversairal Autoencoders (AAE) also learns to fit a given prior distribution, but by fooling a distribution discriminator rather tha n minimizing the KL divergence. 
+
+#### Structure
+![adversarial autoencoder](./img_src/adversarial_autoencoder.PNG)
+
+#### Results
+|Original|Reconstructed|Manifold|
+| ------ | ------------|--------|
+|![orig](./Adversarial_Autoencoder/fit_uniform/orig.png)|![reconstructed](./Adversarial_Autoencoder/fit_uniform/process.gif)|![manifold](./Adversarial_Autoencoder/fit_uniform/manifold_scatter.png)Uniform(0,1)|
+
 ***
 ***
 ### WGAN: Wasserstein's GAN
@@ -177,7 +190,7 @@ In ACGAN, the discriminator not only learns to distinguish fake and real images,
 
 The class information is usually representated by a one-hot encoding. It is then concatenated with a noise vector and fed to the generator.
 
-#### Loss design
+#### Objective
 ![acgan loss](./img_src/acgan_loss.PNG)
 
 #### Results
@@ -186,3 +199,20 @@ The class information is usually representated by a one-hot encoding. It is then
 |![real](./ACGAN/samples/fix_noise.png)|![fake](./ACGAN/samples/process.gif)|
 
 When we fix the noise vector and only change the class label vector, ACGAN generates images from different classes but similar overall structure (eg. thickness, tilt, rotation...).
+***
+***
+### Conditional GAN
+By simply providing extra information (eg. class labels) to both the discriminator and generator, we can extend the original GAN model to a conditional setting. That is, the generator would be able to perform conditional generation.
+
+#### Struture
+![conditional gan](./img_src/conditional_gan.PNG)
+The conditional information can come in many forms. For simple multi-class labels, usually we just feed the networks with one-hot encodings. For more complex conditions such as text, we can train a better embedding (eg. word2vec), and the embedded code will be our condition.
+
+#### Objective
+![conditional gan loss](./img_src/cgan_loss.PNG)
+Note that the loss is nearly identical to the original GAN loss, only that it is contioned on some prior knowledge *y*.
+
+#### Results
+|Real|Generated|
+| ------ | ------------|
+|![real](./Conditional_GAN/samples/real.png)|![fake](./Conditional_GAN/samples/process.gif)|

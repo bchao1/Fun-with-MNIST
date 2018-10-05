@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import utils
-from Conditional_GAN import Generator, Discriminator
+from dense_CGAN import Generator, Discriminator
 import torchvision
 
 if __name__ == '__main__':
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     epochs = 200
     batch_size = 100
     latent_dim = 100
-    dataloader = utils.get_dataloader(batch_size)
+    dataloader = utils.get_dataloader(batch_size, pad = False)
     device = utils.get_device()
     step_per_epoch = np.ceil(dataloader.dataset.__len__() / batch_size)
     sample_dir = './samples'
@@ -29,8 +29,8 @@ if __name__ == '__main__':
     G = Generator(latent_dim = latent_dim).to(device)
     D = Discriminator().to(device)
     
-    g_optim = utils.get_optim(G, 0.0002)
-    d_optim = utils.get_optim(D, 0.0002)
+    g_optim = utils.get_optim(G, 0.0005)
+    d_optim = utils.get_optim(D, 0.0005)
     
     g_log = []
     d_log = []
@@ -38,6 +38,7 @@ if __name__ == '__main__':
     criterion = nn.BCELoss()
     for epoch_i in range(1, epochs + 1):
         for step_i, (real_img, class_label) in enumerate(dataloader):
+            N = real_img.shape[0]
             
             real_labels = torch.ones(batch_size).to(device)
             fake_labels = torch.zeros(batch_size).to(device)
@@ -47,7 +48,7 @@ if __name__ == '__main__':
             mismatch_class = utils.to_onehot(mismatch_label, 10)
             # Train D
             
-            real_img = real_img.to(device)
+            real_img = real_img.view(N, -1).to(device)
             z = torch.randn(batch_size, latent_dim).to(device)
             fake_img = G(z, onehot_class)
             
@@ -83,7 +84,7 @@ if __name__ == '__main__':
             utils.show_process(epoch_i, step_i + 1, step_per_epoch, g_log, d_log)
         
         if epoch_i == 1:
-            torchvision.utils.save_image(real_img, 
+            torchvision.utils.save_image(real_img.reshape(-1, 1, 32, 32), 
                                          os.path.join(sample_dir, 'real.png'),
                                          nrow = 10)
                 

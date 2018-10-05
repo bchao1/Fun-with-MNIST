@@ -14,11 +14,14 @@ import torchvision.transforms as transforms
 import torchvision
 import numpy as np
 
-def get_dataloader(batch_size):
-    transform = transforms.Compose([
-            transforms.Pad(padding = 2, padding_mode = 'edge'),
-            transforms.ToTensor()
-            ])
+def get_dataloader(batch_size, pad = True):
+    if pad:
+        transform = transforms.Compose([
+                transforms.Pad(padding = 2, padding_mode = 'edge'),
+                transforms.ToTensor()
+                ])
+    else:
+        transform = transforms.ToTensor()
     
     dataset = MNIST(root = '../data', train = True, download = False, 
                     transform = transform)
@@ -84,7 +87,7 @@ def generate_classes(model, latent_dim, device, num_classes, epoch, sample_dir):
             
     images = torch.cat(images, 0)
     filename = 'epoch_{}.png'.format(epoch)
-    torchvision.utils.save_image(images, os.path.join(sample_dir, filename), 
+    torchvision.utils.save_image(images.reshape(-1, 1, 32, 32), os.path.join(sample_dir, filename), 
                                  nrow = 10)
     return
 
