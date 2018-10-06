@@ -171,7 +171,7 @@ The discriminator tries to determine if the input is from a prior distribution *
 I simply employed the fully connected network setting in the original paper. The output for the encoder network is linear activation since many distributions has infinite range.
 
 #### Results
-The encoder tries to fit a "triangle" and "donut" distribution. The results below show that the shape of the distribution is captures by the encoder.
+The encoder tries to fit a "triangle" and "donut" distribution. The results below show that the shape of the distribution is captured by the encoder.
 
 |Original|Reconstructed|Manifold|
 | ------ | ------------|--------|
