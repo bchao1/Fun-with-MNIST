@@ -49,6 +49,7 @@ if __name__ == '__main__':
             N = img.shape[0]
             real_label = torch.ones(N).to(device)
             fake_label = torch.zeros(N).to(device)
+            soft_label = torch.Tensor(batch_size).uniform_(0.9, 1).to(device)
             
             img = img.view(N, -1).to(device)
             if result is None:
@@ -70,7 +71,7 @@ if __name__ == '__main__':
             fake_score = D(code)
             real_score = D(z)
             
-            real_loss = discrim_criterion(real_score, real_label)
+            real_loss = discrim_criterion(real_score, soft_label)
             fake_loss = discrim_criterion(fake_score, fake_label)
             loss = real_loss + fake_loss
             

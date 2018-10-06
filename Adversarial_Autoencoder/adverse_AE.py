@@ -16,16 +16,20 @@ class Adversarial_AE(nn.Module):
         
         self.encoder = nn.Sequential(
                 nn.Linear(784, 1000),
+                nn.BatchNorm1d(1000),
                 nn.ReLU(),
                 nn.Linear(1000, 1000),
+                nn.BatchNorm1d(1000),
                 nn.ReLU(),
                 nn.Linear(1000, self.latent_dim)
                 )
         
         self.decoder = nn.Sequential(
                 nn.Linear(self.latent_dim, 1000),
+                nn.BatchNorm1d(1000),
                 nn.ReLU(),
                 nn.Linear(1000, 1000),
+                nn.BatchNorm1d(1000),
                 nn.ReLU(),
                 nn.Linear(1000, 784),
                 nn.Sigmoid()
@@ -40,8 +44,10 @@ class Discriminator(nn.Module):
         self.latent_dim = latent_dim
         self.net = nn.Sequential(
                 nn.Linear(self.latent_dim, 1000),
+                nn.BatchNorm1d(1000),
                 nn.ReLU(),
                 nn.Linear(1000, 1000),
+                nn.BatchNorm1d(1000),
                 nn.ReLU(),
                 nn.Linear(1000, 1),
                 nn.Sigmoid()

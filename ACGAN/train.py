@@ -4,7 +4,8 @@ Created on Tue Oct  2 17:51:41 2018
 
 @author: USER
 """
-
+import sys
+sys.path.append('..')
 import torch
 import torch.nn as nn
 import numpy as np

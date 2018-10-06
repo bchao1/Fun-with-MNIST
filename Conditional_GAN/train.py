@@ -4,12 +4,15 @@ Created on Tue Oct  2 17:51:41 2018
 
 @author: USER
 """
+import sys
+sys.path.append('..')
 
 import os
 import torch
 import torch.nn as nn
 import numpy as np
-import utils
+import utils.general as utils
+import utils.cgan as cgan_utils
 from dense_CGAN import Generator, Discriminator
 import torchvision
 
@@ -42,10 +45,10 @@ if __name__ == '__main__':
             
             real_labels = torch.ones(batch_size).to(device)
             fake_labels = torch.zeros(batch_size).to(device)
-            onehot_class = utils.to_onehot(class_label, 10).to(device)
+            onehot_class = cgan_utils.to_onehot(class_label, 10).to(device)
             
             mismatch_label = utils.get_label_mismatch(class_label, 10)
-            mismatch_class = utils.to_onehot(mismatch_label, 10)
+            mismatch_class = cgan_utils.to_onehot(mismatch_label, 10)
             # Train D
             
             real_img = real_img.view(N, -1).to(device)
@@ -90,7 +93,7 @@ if __name__ == '__main__':
                 
         utils.save_model(G, g_optim, g_log, checkpoint_dir, 'G.ckpt')
         utils.save_model(D, d_optim, d_log, checkpoint_dir, 'D.ckpt')
-        utils.generate_classes(G, latent_dim, device, 10, epoch_i, sample_dir)
+        cgan_utils.generate_classes(G, latent_dim, device, 10, epoch_i, sample_dir)
         
             
     

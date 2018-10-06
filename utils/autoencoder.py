@@ -12,8 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-color_code = ['#D9E500', '#E0A200', '#DC5600', '#D80C00', '#89E000', 
-              '#CF007D', '#CB00BE', '#9200C7', '#4E00C3', '#0E00BF']
+color_code = np.array(['#D9E500', '#E0A200', '#DC5600', '#D80C00', '#89E000', 
+              '#CF007D', '#CB00BE', '#9200C7', '#4E00C3', '#0E00BF'])
 
 def show_process(epoch, step, step_per_epoch, loss_log):
     print('Epoch [{}], Step [{}/{}], Loss [{:8f}]'.format(
@@ -55,8 +55,8 @@ def plot_manifold(encoder, dataset, num_points, sample_dir):
     data = torch.cat(data, 0)
     code = encoder(data).squeeze()
     x, y = code.detach().numpy().transpose()
-    for i in range(num_points):
-        plt.scatter(x[i], y[i], marker = '.', c = color_code[labels[i]])
+    i = list(range(num_points))
+    plt.scatter(x, y, marker = '.', c = color_code[i])
     
     patches = []
     for i in range(len(color_code)):
