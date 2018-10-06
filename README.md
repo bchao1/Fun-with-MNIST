@@ -8,7 +8,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 
 - Generative Models
 
-|Model|Reference|Difference from orignal GAN
+|Model|Reference|Difference from orignal GAN|
 |-----|---------|---|
 |**Autoencoders**|
 |Vanilla Autoencoders|https://www.cs.toronto.edu/~hinton/science.pdf|N/A|
@@ -41,6 +41,22 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |-----|---------|
 |Semi-supervied learning with SGAN|https://arxiv.org/abs/1606.01583|
 |Transfer Learning||
+
+## Basics
+### MNIST Classification
+Back to the basics: implemeting a CNN to classify digits. The architecture is a feature extrator(convolutional layers) + a fully connected layer that outputs class probabilities.
+```
+CONV(in:1, out:64, k4s2)->LeakyReLU(0.2)->BN(64)->
+CONV(in:64, out:128, k4s2)->LeakyReLU(0.2)->BN(128)->
+CONV(in:128, out:256, k4s2)->LeakyReLU(0.2)->BN(256)->
+CONV(in:256, out:512, k4s2)->LeakyReLU(0.2)->BN(512)->
+FCN(2048, 10)->Softmax
+```
+
+#### Results
+|Accuracy|Notes|
+|--------|-----|
+|![train](./Classification/accuracy.png)|blue: train, orange: test|
 
 ## Generative Models
 In the following generative models, some of them (all GANs) are modified from the following model architecture (DCGAN-like):
