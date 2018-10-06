@@ -8,21 +8,32 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 
 - Generative Models
 
+|Model|Reference|Difference from orignal GAN
+|-----|---------|---|
+|**Autoencoders**|
+|Vanilla Autoencoders|https://www.cs.toronto.edu/~hinton/science.pdf|N/A|
+|VAE: Variational Autoencoder|https://arxiv.org/abs/1312.6114|N/A|
+|**GANs**|
+|GAN: Generative Adversarial Networks|https://arxiv.org/abs/1406.2661|N/A|
+|Adversarial Autoencoders|https://arxiv.org/abs/1511.05644|Encoder generates samples from a prior distribution.|
+|WGAN: Wasserstein's GAN|https://arxiv.org/abs/1701.07875|No sigmoid at discriminator output, weight clipping.|
+|WGAN-GP: Improved Wasserstein's GAN|https://arxiv.org/abs/1704.00028|Same as WGAN, no weight clipping, gradient penalty.|
+|InfoGAN: Information maximizing GAN|https://arxiv.org/abs/1606.03657||
+|ACGAN: Auxiliary Classifier GAN|https://arxiv.org/abs/1610.09585|Generator has label information, discriminator also classifies.|
+|Conditional GAN|https://arxiv.org/abs/1411.1784|Both generator and discriminator has label information|
+|VAE-GAN: VAE + GAN|https://arxiv.org/abs/1512.09300|
+|BEGAN: Boundary Equilibrium GAN|https://arxiv.org/abs/1703.10717||
+|EBGAN: Energy-based GAN|https://arxiv.org/abs/1609.03126||
+|LSGAN: Least Squares GAN|https://arxiv.org/abs/1611.04076|No sigmoid at discriminator output, measures L2 distance of image scores.|
+
+- Domain Adaptation
+
 |Model|Reference|
 |-----|---------|
-|Vanilla Autoencoders|https://www.cs.toronto.edu/~hinton/science.pdf|
-|VAE: Variational Autoencoder|https://arxiv.org/abs/1312.6114|
-|GAN: Generative Adversarial Networks|https://arxiv.org/abs/1406.2661|
-|Adversarial Autoencoders|https://arxiv.org/abs/1511.05644|
-|WGAN: Wasserstein's GAN|https://arxiv.org/abs/1701.07875|
-|WGAN-GP: Improved Wasserstein's GAN|https://arxiv.org/abs/1704.00028|
-|InfoGAN: Information maximizing GAN|https://arxiv.org/abs/1606.03657|
-|ACGAN: Auxiliary Classifier GAN|https://arxiv.org/abs/1610.09585|
-|Conditional GAN|https://arxiv.org/abs/1411.1784|
-|VAE-GAN: VAE + GAN|https://arxiv.org/abs/1512.09300|
-|BEGAN: Boundary Equilibrium GAN|https://arxiv.org/abs/1703.10717|
-|EBGAN: Energy-based GAN|https://arxiv.org/abs/1609.03126|
-|LSGAN: Least Squares GAN|https://arxiv.org/abs/1611.04076|
+|CycleGAN|https://arxiv.org/abs/1703.10593|
+|Coupled GAN|https://arxiv.org/abs/1606.07536|
+|UNIT|https://arxiv.org/abs/1703.00848|
+|pix2pix|https://arxiv.org/abs/1611.07004|
 
 - Others
 
@@ -32,7 +43,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |Transfer Learning||
 
 ## Generative Models
-In the following generative models, some of them are modified from the following model architecture (DCGAN-like):
+In the following generative models, some of them (all GANs) are modified from the following model architecture (DCGAN-like):
 ```python
 // Example: Autoencoder structure
 // Downsampling network (eg. Encoder, Discriminator)
@@ -70,7 +81,7 @@ nn.Sequential(
                 nn.Sigmoid()
                 )
 ```
-Some models are just simple fully-connected layers. I did not replicate all settings in the orignal papers since it is more important to capture the overall concept.
+Some models (eg. autoencoders) are just simple fully-connected layers. I did not replicate all settings in the orignal papers since it is more important to capture the overall concept.
 ***
 ***
 ### Deep autoencoders
@@ -188,6 +199,20 @@ An (allegedly) more stable GAN model. Rather than minimizing the JS divergence b
 |Real images|Generated|
 | ------ | ------------|
 |![real](./GAN/samples/real.png)|![fake](./WGAN/samples/process.gif)|
+***
+***
+### LSGAN: Least Squares GAN
+Yet another GAN variant with a modified loss function. Sigmoid activation is removed from the output layer of the discriminator, and we aim to minimize the **L2** distance between the discriminator outputs and the wished score for each image.
+
+#### Objective 
+![lsgan loss](./img_src/lsgan_loss.png)
+
+*a, b, c* are hyperparameters to be determined (the scores we want fake and real images to have). In the original paper, the author uses *a = 1, b = 0, c = 1*.
+
+#### Results
+|Real images|Generated|
+| ------ | ------------|
+|![real](./LSGAN/samples/real.png)|![fake](./LSGAN/samples/process.gif)|
 ***
 ***
 ### ACGAN: Auxiliary Classifier GANs

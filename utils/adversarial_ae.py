@@ -14,6 +14,12 @@ import numpy as np
 color_code = np.array(['#D9E500', '#E0A200', '#DC5600', '#D80C00', '#89E000', 
               '#CF007D', '#CB00BE', '#9200C7', '#4E00C3', '#0E00BF'])
 
+def to_onehot(labels, classes):
+    batch_size = labels.shape[0]
+    onehot = torch.zeros(batch_size, classes)
+    for i in range(batch_size):
+        onehot[i][labels[i]] = 1
+    return onehot
 
 def plot_manifold(encoder, device, dataset, num_points, sample_dir):
     plt.gca().set_aspect('equal', adjustable='box')

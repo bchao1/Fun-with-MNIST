@@ -4,16 +4,19 @@ Created on Tue Oct  2 17:51:41 2018
 
 @author: USER
 """
-
+import sys
+sys.path.append('..')
+import os
 import torch
 import torch.nn as nn
 import numpy as np
-import utils
-from GAN import Generator, Discriminator
+import utils.general as utils
+from LSGAN import Generator, Discriminator
+import torchvision
 
 if __name__ == '__main__':
     
-    epochs = 200
+    epochs = 100
     batch_size = 100
     latent_dim = 100
     dataloader = utils.get_dataloader(batch_size)
@@ -33,8 +36,7 @@ if __name__ == '__main__':
     g_log = []
     d_log = []
     
-    criterion = nn.BCELoss()
-    
+    fix_z = torch.randn(batch_size, latent_dim).to(device)
     for epoch_i in range(1, epochs + 1):
         for step_i, (real_img, _) in enumerate(dataloader):
             
@@ -50,10 +52,10 @@ if __name__ == '__main__':
             real_score = D(real_img)
             fake_score = D(fake_img)
             
-            real_loss = criterion(real_score, real_labels)
-            fake_loss = criterion(fake_score, fake_labels)
+            real_loss = ((real_score - 1)**2).mean()
+            fake_loss = (fake_score**2).mean()
             
-            d_loss = real_loss + fake_loss
+            d_loss = (real_loss + fake_loss) * 0.5
             
             d_optim.zero_grad()
             d_loss.backward()
@@ -67,7 +69,7 @@ if __name__ == '__main__':
             
             fake_score = D(fake_img)
             
-            g_loss = criterion(fake_score, real_labels)
+            g_loss = ((fake_score - 1)**2).mean() * 0.5
             
             g_optim.zero_grad()
             g_loss.backward()
@@ -75,8 +77,13 @@ if __name__ == '__main__':
             g_log.append(g_loss.item())
             
             utils.show_process(epoch_i, step_i + 1, step_per_epoch, g_log, d_log)
-            if (step_i + 1) % 200 == 0:
-                utils.save_image(fake_img, 10, epoch_i, step_i + 1, sample_dir)
+        
+        if epoch_i == 1:
+            torchvision.utils.save_image(real_img, 
+                                         os.path.join(sample_dir, 'real.png'),
+                                         nrow = 10)
+        fake_img = G(fix_z)
+        utils.save_image(fake_img, 10, epoch_i, step_i + 1, sample_dir)
                 
         utils.save_model(G, g_optim, g_log, checkpoint_dir, 'G.ckpt')
         utils.save_model(D, d_optim, d_log, checkpoint_dir, 'D.ckpt')
