@@ -3,8 +3,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 ## Table of contents
 - Basics
     - MNIST Classification
-    - tSNE on MNIST
-    - PCA on MNIST
+    - Principle Component Analysis on MNIST
 
 - Generative Models
 
@@ -41,6 +40,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |-----|---------|
 |Semi-supervied learning with SGAN|https://arxiv.org/abs/1606.01583|
 |Transfer Learning||
+|Spatial Transformer Networks||
 
 ## Basics
 ### MNIST Classification
@@ -57,6 +57,11 @@ FCN(2048, 10)->Softmax
 |Accuracy|Notes|
 |--------|-----|
 |![train](./Classification/accuracy.png)|blue: train, orange: test|
+
+### PCA on MNIST
+|PCA|
+|---|
+|![pca](./misc/mnist_pca.png)|
 
 ## Generative Models
 In the following generative models, some of them (all GANs) are modified from the following model architecture (DCGAN-like):
@@ -224,6 +229,7 @@ The encoder tries to fit a "triangle" and "donut" distribution. The results belo
 
 ***
 ***
+
 ### WGAN: Wasserstein's GAN
 An (allegedly) more stable GAN model. Rather than minimizing the JS divergence between the prior training dats distribution and the generated data distribution as in GAN, WGAN minimizes the **Wasserstein's** distance. 
 #### Algorithm
@@ -234,6 +240,7 @@ An (allegedly) more stable GAN model. Rather than minimizing the JS divergence b
 |![real](./GAN/samples/real.png)|![fake](./WGAN/samples/process.gif)|
 ***
 ***
+
 ### LSGAN: Least Squares GAN
 Yet another GAN variant with a modified loss function. Sigmoid activation is removed from the output layer of the discriminator, and we aim to minimize the **L2** distance between the discriminator outputs and the wished score for each image.
 
@@ -248,6 +255,7 @@ Yet another GAN variant with a modified loss function. Sigmoid activation is rem
 |![real](./LSGAN/samples/real.png)|![fake](./LSGAN/samples/process.gif)|
 ***
 ***
+
 ### ACGAN: Auxiliary Classifier GANs
 In ACGAN, the discriminator not only learns to distinguish fake and real images, but also tries to classify the image into correct labels. We can then manipulate the disentangled latent code and generate images conditioned on their class.
 
@@ -267,6 +275,7 @@ The class information is usually representated by a one-hot encoding. It is then
 When we fix the noise vector and only change the class label vector, ACGAN generates images from different classes but similar overall structure (eg. thickness, tilt, rotation...).
 ***
 ***
+
 ### Conditional GAN
 By simply providing extra information (eg. class labels) to both the discriminator and generator, we can extend the original GAN model to a conditional setting. That is, the generator would be able to perform conditional generation.
 
