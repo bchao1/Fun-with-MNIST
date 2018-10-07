@@ -12,7 +12,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |-----|---------|---|
 |**Autoencoders**|
 |Vanilla Autoencoders|https://www.cs.toronto.edu/~hinton/science.pdf|N/A|
-|VAE: Variational Autoencoder|https://arxiv.org/abs/1312.6114|N/A|
+|VAE: Variational Autoencoders|https://arxiv.org/abs/1312.6114|N/A|
 |**GANs**|
 |GAN: Generative Adversarial Networks|https://arxiv.org/abs/1406.2661|N/A|
 |Adversarial Autoencoders|https://arxiv.org/abs/1511.05644|Encoder generates samples from a prior distribution.|
@@ -23,7 +23,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |Conditional GAN|https://arxiv.org/abs/1411.1784|Both generator and discriminator has label information|
 |VAE-GAN: VAE + GAN|https://arxiv.org/abs/1512.09300|
 |BEGAN: Boundary Equilibrium GAN|https://arxiv.org/abs/1703.10717||
-|EBGAN: Energy-based GAN|https://arxiv.org/abs/1609.03126||
+|EBGAN: Energy-based GAN|https://arxiv.org/abs/1609.03126|Models discriminator as an autoencoder|
 |LSGAN: Least Squares GAN|https://arxiv.org/abs/1611.04076|No sigmoid at discriminator output, measures L2 distance of image scores.|
 
 - Domain Adaptation
@@ -166,11 +166,21 @@ Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We
 #### Structure
 ![VAE](./img_src/VAE.png)
 
+In my experiment, a simple fully connected network is used.
+```
+ 784 -> 400 -> (mu: 2, logvar: 2) -> 2 -> 400 -> 784
+```
+The numbers indicates the size of the hidden layer.
+
 #### Objective
 Usually the decoder input is sampled from a N(0,1) normal distribution. We can simply add a **KL divergence** loss between *N, Q* to the original autoencoder reconstruction loss so as to match *Q* with the desired *N* distribution.
 
 ![vae loss](./img_src/vae_kl_loss.PNG)
+
 #### Results
+|Original|Reconstructed|Random Generation|
+| ------ | ------------|--------|
+|![orig](./VAE/samples/orig.png)|![reconstructed](./VAE/samples/process.gif)|![random](./VAE/samples/sample.png)|
 ***
 ***
 ### GAN: Generative Adversarial Networks

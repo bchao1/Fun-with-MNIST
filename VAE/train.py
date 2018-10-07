@@ -15,7 +15,7 @@ import torchvision
 
 if __name__ == '__main__':
     
-    epochs = 50
+    epochs = 100
     batch_size = 100
     latent_dim = 2
     dataloader = utils.get_dataloader(batch_size)
@@ -27,42 +27,56 @@ if __name__ == '__main__':
     utils.makedirs(sample_dir, checkpoint_dir)
     
     net = VAE(latent_dim = latent_dim).to(device)
-    optim = utils.get_optim(net, 0.0002)
+    optim = torch.optim.Adam(net.parameters())
     
-    loss_log = []
+    rec_log = []
+    kl_log = []
     
-    criterion = nn.BCELoss()
+    criterion = nn.BCELoss(reduction = 'sum')
     
     result = None
     for epoch_i in range(1, epochs + 1):
         for step_i, (real_img, _) in enumerate(dataloader):
-            real_img = real_img.to(device)
+            N = real_img.shape[0]
+            real_img = real_img.view(N, -1).to(device)
             
             if result is None:
                 result = real_img
                 
-            reconstructed = net(real_img)
+            reconstructed, mu, logvar = net(real_img)
             
             reconstruction_loss = criterion(reconstructed, real_img)
-            kl_loss = utils.kl_loss(net.z_mean, net.z_sigma)
+            kl_loss = utils.kl_loss(mu, logvar)
             
             loss = kl_loss + reconstruction_loss
             
             optim.zero_grad()
             loss.backward()
             optim.step()
-            loss_log.append(loss.item())
             
-            utils.show_process(epoch_i, step_i + 1, step_per_epoch, loss_log, kl_loss)
+            rec_log.append(reconstruction_loss.item())
+            kl_log.append(kl_loss.item())
+            
+            utils.show_process(epoch_i, step_i + 1, step_per_epoch, rec_log, kl_log)
             
         if epoch_i == 1:
-            torchvision.utils.save_image(result, 
+            torchvision.utils.save_image(result.reshape(-1, 1, 28, 28), 
                                          os.path.join(sample_dir, 'orig.png'), 
                                          nrow = 10)
-        reconstructed = net(result)
-        utils.save_image(reconstructed, 10, epoch_i, step_i + 1, sample_dir)
+        reconstructed, _, _ = net(result)
+        utils.save_image(reconstructed.reshape(-1, 1, 28, 28), 10, epoch_i, step_i + 1, sample_dir)
+        sample = net.decoder(torch.randn((100, 2)).to(device))
+        torchvision.utils.save_image(sample.reshape(-1, 1, 28, 28), 
+                                         os.path.join(sample_dir, 'sample_{}.png'.format(epoch_i)), 
+                                         nrow = 10)
                 
-        utils.save_model(net, optim, loss_log, checkpoint_dir, 'autoencoder.ckpt')
+        utils.save_model(net, optim, rec_log, checkpoint_dir, 'autoencoder.ckpt')
+   
+    z = utils.box_muller()
+    result = net.decoder(z)
+    torchvision.utils.save_image(result.reshape(-1, 1, 28, 28), 
+                                 os.path.join(sample_dir, 'manifold.png'), 
+                                 nrow = 11)
         
             
     

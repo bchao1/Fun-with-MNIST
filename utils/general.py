@@ -14,11 +14,14 @@ import torchvision.transforms as transforms
 import torchvision
 import numpy as np
 
-def get_dataloader(batch_size):
-    transform = transforms.Compose([
-            transforms.Pad(padding = 2, padding_mode = 'edge'),
-            transforms.ToTensor()
-            ])
+def get_dataloader(batch_size, pad = False):
+    if pad:
+        transform = transforms.Compose([
+                transforms.Pad(padding = 2, padding_mode = 'edge'),
+                transforms.ToTensor()
+                ])
+    else:
+        transform = transforms.ToTensor()
     
     dataset = MNIST(root = '../data', train = True, download = False, 
                     transform = transform)

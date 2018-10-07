@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Wed Oct  3 16:15:31 2018
+
+@author: USER
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Tue Oct  2 17:21:27 2018
 
 @author: USER
@@ -7,70 +14,43 @@ Created on Tue Oct  2 17:21:27 2018
 
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 
 class VAE(nn.Module):
     def __init__(self, latent_dim = 100):
         super(VAE, self).__init__()
 
         self.latent_dim = latent_dim
-        self.encoder = nn.Sequential(
-                nn.Conv2d(1, 64, 4, 2, 1, bias = False),
-                nn.LeakyReLU(0.005, True),
-                nn.Conv2d(64, 128, 4, 2, 1, bias = False),
-                nn.BatchNorm2d(128),
-                nn.LeakyReLU(0.005, True),
-                nn.Conv2d(128, 256, 4, 2, 1, bias = False),
-                nn.BatchNorm2d(256),
-                nn.LeakyReLU(0.005, True),
-                nn.Conv2d(256, 512, 4, 2, 1, bias = False),
-                nn.BatchNorm2d(512),
-                nn.LeakyReLU(0.005, True),
-                nn.Conv2d(512, 1024, 2, 1),
-                nn.LeakyReLU(0.005, True)
-                )
-        self.enc_log_sigma = nn.Linear(1024, self.latent_dim)
-        self.enc_mu = nn.Linear(1024, self.latent_dim)
+        self.encoder = nn.Sequential(nn.Linear(784, 400),
+                                     nn.BatchNorm1d(400),
+                                     nn.ReLU()
+                                     )
+                                     
+                                     
+        self.enc_log_sigma = nn.Linear(400, self.latent_dim)
+        self.enc_mu = nn.Linear(400, self.latent_dim)
         
-        self.decoder = nn.Sequential(
-                nn.ConvTranspose2d(self.latent_dim, 512, 4, 2, 1, bias = False),
-                nn.BatchNorm2d(512),
-                nn.LeakyReLU(0.01, True),
-                nn.ConvTranspose2d(512, 256, 4, 2, 1, bias = False),
-                nn.BatchNorm2d(256),
-                nn.LeakyReLU(0.01, True),
-                nn.ConvTranspose2d(256, 128, 4, 2, 1, bias = False),
-                nn.BatchNorm2d(128),
-                nn.LeakyReLU(0.01, True),
-                nn.ConvTranspose2d(128, 64, 4, 2, 1, bias = False),
-                nn.BatchNorm2d(64),
-                nn.LeakyReLU(0.01, True),
-                nn.ConvTranspose2d(64, 1, 4, 2, 1, bias = False),
-                nn.Sigmoid()
-                )
+        self.decoder = nn.Sequential(nn.Linear(self.latent_dim, 400),
+                                     nn.BatchNorm1d(400),
+                                     nn.ReLU(),
+                                     nn.Linear(400,784),
+                                     nn.Sigmoid()
+                                     )
+
+    def encode(self, x):
+        h1 = self.encoder(x)
+        return self.enc_mu(h1), self.enc_log_sigma(h1)
         
     def sample_latent(self, mu, log_sigma):
-        sigma = torch.exp(log_sigma)
+        sigma = torch.exp(0.5*log_sigma)
         
-        self.z_mean = mu
-        self.z_sigma = sigma
+        eps = torch.Tensor(sigma.shape).normal_()
+        if torch.cuda.is_available():
+            eps = eps.cuda()
         
-        std_z = torch.Tensor(sigma.shape).normal_().cuda()
-        
-        return mu + sigma * Variable(std_z, False)
+        return eps.mul(sigma).add_(mu)
         
     def forward(self, input):
-        code = self.encoder(input)
-        flatten = code.view(-1, 1024)
+        mu, logvar = self.encode(input)
         
-        sigma = self.enc_log_sigma(flatten)
-        mu = self.enc_mu(flatten)
-        
-        z = self.sample_latent(mu, sigma).unsqueeze_(2).unsqueeze_(3)
-        return self.decoder(z)
-
-    
-if __name__ == '__main__':
-    AE = VAE(2)
-    x = torch.randn(100, 1, 32, 32)
-    o = AE(x)
+        z = self.sample_latent(mu, logvar)
+        return self.decoder(z), mu, logvar
