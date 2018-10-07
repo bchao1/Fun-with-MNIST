@@ -50,8 +50,7 @@ class Discriminator(nn.Module):
                 nn.Conv2d(256, 512, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(512),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(512, 1, 2, 1),
-                nn.Sigmoid()
+                nn.Conv2d(512, 1, 2, 1)
                 )
     def forward(self, input):
         return self.net(input).view(-1)

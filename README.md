@@ -3,7 +3,8 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 ## Table of contents
 - Basics
     - MNIST Classification
-    - Principle Component Analysis on MNIST
+    - PCA: Principle Component Analysis on MNIST
+    - tSNE: t-Nearest Neighbors Embedding on MNIST
 
 - Generative Models
 
@@ -16,7 +17,7 @@ All MNIST images are padded to 32 * 32 for the sake of convenience. The MNIST da
 |GAN: Generative Adversarial Networks|https://arxiv.org/abs/1406.2661|N/A|
 |Adversarial Autoencoders|https://arxiv.org/abs/1511.05644|Encoder generates samples from a prior distribution.|
 |WGAN: Wasserstein's GAN|https://arxiv.org/abs/1701.07875|No sigmoid at discriminator output, weight clipping.|
-|WGAN-GP: Improved Wasserstein's GAN|https://arxiv.org/abs/1704.00028|Same as WGAN, no weight clipping, gradient penalty.|
+|WGAN-GP: Improved Wasserstein's GAN|https://arxiv.org/abs/1704.00028|Same as WGAN but replaces weight clipping with gradient penalty.|
 |InfoGAN: Information maximizing GAN|https://arxiv.org/abs/1606.03657||
 |ACGAN: Auxiliary Classifier GAN|https://arxiv.org/abs/1610.09585|Generator has label information, discriminator also classifies.|
 |Conditional GAN|https://arxiv.org/abs/1411.1784|Both generator and discriminator has label information|
@@ -65,9 +66,8 @@ FCN(2048, 10)->Softmax
 
 ## Generative Models
 In the following generative models, some of them (all GANs) are modified from the following model architecture (DCGAN-like):
+- Downsampling networks(discriminator, encoders)
 ```python
-// Example: Autoencoder structure
-// Downsampling network (eg. Encoder, Discriminator)
 nn.Sequential(
                 nn.Conv2d(1, 64, 4, 2, 1, bias = False),
                 nn.LeakyReLU(0.2),
@@ -83,8 +83,9 @@ nn.Sequential(
                 nn.Conv2d(512, self.latent_dim, 2, 1),
                 nn.Sigmoid()
                 )
-                
-// Upsampling network (eg. Decoder, Generator)
+```
+- Upsampling networks(generator, decoder)
+```python
 nn.Sequential(
                 nn.ConvTranspose2d(self.latent_dim, 512, 4, 2, 1, bias = False),
                 nn.BatchNorm2d(512),
@@ -102,10 +103,11 @@ nn.Sequential(
                 nn.Sigmoid()
                 )
 ```
-Some models (eg. autoencoders) are just simple fully-connected layers. I did not replicate all settings in the orignal papers since it is more important to capture the overall concept.
+Some models (eg. autoencoders, vae) are just simple fully-connected layers. I did not replicate all settings in the orignal papers since it is more important to capture the overall concept.
+
 ***
 ***
-### Deep autoencoders
+### **[ Deep autoencoders ]**
 Autoencoders are relatively simple generative models compared to the state-of-the-art GANs. The basic idea is to project a high-dimensional vector (eg. an image) to a low-dimensional latent space, and then reconstruct the image based on this latent code representation.
 #### Structure
 ![autoencoder](./img_src/autoencoder.png)
@@ -165,7 +167,7 @@ Scatter plot of the 2D manifold.
 |![manifold scatter](./AE/samples/no_sig_reg/manifold_scatter.png)|
 ***
 ***
-### VAE: Variational Autoencoder
+### **[ VAE: Variational Autoencoder ]**
 Unlike autoencoders, VAE encoders output two vectors, **mean** and **sigma**. We then sample from the normal distribution characterized by mean and sigma (let this distribution be *Q*), and take this as the decoder input.
 
 #### Structure
@@ -195,7 +197,7 @@ By sampling from uniform(0, 1) and transfroming it to Gaussian through Box-Mulle
 
 ***
 ***
-### GAN: Generative Adversarial Networks
+### **[ GAN: Generative Adversarial Networks ]**
 The groundwork for most generative models today, GANs are generally composed of two actors, a Generator and a Discriminator, who play a zero-sum game. The discriminator tries to distinguish real and synthesized images, while the generator learns to create images that fool the discriminator.
 #### Structure
 ![gan](./img_src/gan.png)
@@ -209,7 +211,7 @@ The groundwork for most generative models today, GANs are generally composed of 
 |![real](./GAN/samples/real.png)|![fake](./GAN/samples/process.gif)|
 ***
 ***
-### Adversarial Autoencoders
+### **[ Adversarial Autoencoders ]**
 Similar to VAE(Variational Autoencoders), the encoder in Adversairal Autoencoders (AAE) also learns to fit a given prior distribution, but by fooling a distribution discriminator rather tha n minimizing the KL divergence. 
 
 #### Structure
@@ -230,7 +232,7 @@ The encoder tries to fit a "triangle" and "donut" distribution. The results belo
 ***
 ***
 
-### WGAN: Wasserstein's GAN
+### **[ WGAN: Wasserstein's GAN ]**
 An (allegedly) more stable GAN model. Rather than minimizing the JS divergence between the prior training dats distribution and the generated data distribution as in GAN, WGAN minimizes the **Wasserstein's** distance. 
 #### Algorithm
 ![wgan](./img_src/wgan_algo.png)
@@ -238,10 +240,23 @@ An (allegedly) more stable GAN model. Rather than minimizing the JS divergence b
 |Real images|Generated|
 | ------ | ------------|
 |![real](./GAN/samples/real.png)|![fake](./WGAN/samples/process.gif)|
-***
-***
 
-### LSGAN: Least Squares GAN
+***
+***
+### **[ WGAN-GP: WGAN with Gradient Penalty ]**
+In WGAN, it is difficult to enforce the Lipschitz constraint. The original paper suggests clipping weights, but bad choices of the bounds may lead to failures. WGANGP resolves this problem by using gradient penalty to enforce the Lipshitz constraint.
+
+#### Algorithm
+![wgangp](./img_src/wgangp_algo.png)
+
+#### Results
+|Real images|Generated|
+| ------ | ------------|
+|![real](./WGAN-GP/samples/real.png)|![fake](./WGAN-GP/samples/process.gif)|
+
+***
+***
+### **[ LSGAN: Least Squares GAN ]**
 Yet another GAN variant with a modified loss function. Sigmoid activation is removed from the output layer of the discriminator, and we aim to minimize the **L2** distance between the discriminator outputs and the wished score for each image.
 
 #### Objective 
@@ -256,7 +271,7 @@ Yet another GAN variant with a modified loss function. Sigmoid activation is rem
 ***
 ***
 
-### ACGAN: Auxiliary Classifier GANs
+### **[ ACGAN: Auxiliary Classifier GANs ]**
 In ACGAN, the discriminator not only learns to distinguish fake and real images, but also tries to classify the image into correct labels. We can then manipulate the disentangled latent code and generate images conditioned on their class.
 
 #### Structure
@@ -276,7 +291,7 @@ When we fix the noise vector and only change the class label vector, ACGAN gener
 ***
 ***
 
-### Conditional GAN
+### **[ Conditional GAN ]**
 By simply providing extra information (eg. class labels) to both the discriminator and generator, we can extend the original GAN model to a conditional setting. That is, the generator would be able to perform conditional generation.
 
 #### Struture

@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from torchvision.datasets import MNIST
 import torchvision.transforms as transforms
 
@@ -30,14 +31,21 @@ def pack(data):
      labels = list(map(get_label, idx))
      return np.concatenate(batch, 0), np.concatenate(labels, 0)
 
-def reduction(data):
+def pca_reduction(data):
     batch, label = pack(data)
     pca = PCA(n_components = 2)
     reduce = pca.fit_transform(batch).transpose()
     x, y = reduce
     return x, y, label.transpose().flatten()
 
-def plot(x, y, labels):
+def tsne_reduction(data):
+    batch, label = pack(data)
+    tsne = TSNE(n_components = 2)
+    reduce = tsne.fit_transform(batch).transpose()
+    x, y = reduce
+    return x, y, label.transpose().flatten()
+
+def plot(x, y, labels, reduction):
     plt.gca().set_aspect('equal', adjustable='box')
     plt.figure(figsize=(6, 6), dpi=100)
     
@@ -46,13 +54,16 @@ def plot(x, y, labels):
     color_legend = list(map(lambda i:patches.Patch(color = color_code[i], 
                                                    label = i), color_idx))
     plt.legend(handles = color_legend)
-    plt.savefig('mnist_pca.png')
+    plt.savefig('mnist_{}.png'.format(reduction))
 
-def main():
+def main(reduction):
     data = get_data()
     batch, labels = pack(data)
-    x, y = reduction(batch)
-    plot(x, y, labels)
+    if reduction == 'pca':
+        x, y, labels = pca_reduction(batch)
+    elif reduction == 'tsne':
+        x, y, labels = tsne_reduction(data)
+    plot(x, y, labels, reduction)
 
 if __name__ == '__main__':
-    main()
+    main('tsne')
