@@ -28,7 +28,7 @@ if __name__ == '__main__':
     
     net = VAE(latent_dim = latent_dim).to(device)
     optim = torch.optim.Adam(net.parameters())
-    '''
+    
     rec_log = []
     kl_log = []
     
@@ -71,8 +71,7 @@ if __name__ == '__main__':
                                          nrow = 10)
                 
         utils.save_model(net, optim, rec_log, checkpoint_dir, 'autoencoder.ckpt')
-    '''
-    utils.load_model(net, './checkpoints/autoencoder.ckpt')
+
     steps = 50
     z = utils.box_muller(steps).to(device)
     result = net.decoder(z)
