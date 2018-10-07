@@ -64,6 +64,11 @@ FCN(2048, 10)->Softmax
 |---|
 |![pca](./misc/mnist_pca.png)|
 
+### tSNE on MNIST
+|tSNE|
+|----|
+|![tSNE](./misc/mnist_tsne.png)
+
 ## Generative Models
 In the following generative models, some of them (all GANs) are modified from the following model architecture (DCGAN-like):
 - Downsampling networks(discriminator, encoders)
