@@ -78,14 +78,14 @@ def kl_loss(mu, logvar):
     return -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
 
-def box_muller(batch_size):
+def box_muller():
     p = []
-    u1 = np.linspace(0, 1, 11)
-    u2 = np.linspace(0, 1, 11)
+    u1 = np.linspace(0.1, 0.9, 10)
+    u2 = np.linspace(0.1, 0.9, 10)
     for i in range(len(u1)):
         for j in range(len(u2)):
-            z1 = np.sqrt(-2*np.log(u1[i])*np.cos(2*np.pi*u2[j]))
-            z2 = np.sqrt(-2*np.log(u1[i])*np.sin(2*np.pi*u2[j]))
+            z1 = np.sqrt(-2*np.log(u1[i]))*np.cos(2*np.pi*u2[j])
+            z2 = np.sqrt(-2*np.log(u1[i]))*np.sin(2*np.pi*u2[j])
             coor = [z1, z2]
             p.append(torch.tensor(coor, dtype = torch.float).unsqueeze(0))
     return torch.cat(p, 0)

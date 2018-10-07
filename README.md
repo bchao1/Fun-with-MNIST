@@ -181,6 +181,13 @@ Usually the decoder input is sampled from a N(0,1) normal distribution. We can s
 |Original|Reconstructed|Random Generation|
 | ------ | ------------|--------|
 |![orig](./VAE/samples/orig.png)|![reconstructed](./VAE/samples/process.gif)|![random](./VAE/samples/sample.png)|
+
+By sampling from uniform(0, 1) and transfroming it to Gaussian through Box-Muller method, we can visualize the 2-D continuous manifold.
+
+|Manifold|
+|--------|
+|![manifold](./VAE/samples/manifold.png)|
+
 ***
 ***
 ### GAN: Generative Adversarial Networks

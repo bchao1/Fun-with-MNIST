@@ -28,7 +28,7 @@ if __name__ == '__main__':
     
     net = VAE(latent_dim = latent_dim).to(device)
     optim = torch.optim.Adam(net.parameters())
-    
+    '''
     rec_log = []
     kl_log = []
     
@@ -71,12 +71,13 @@ if __name__ == '__main__':
                                          nrow = 10)
                 
         utils.save_model(net, optim, rec_log, checkpoint_dir, 'autoencoder.ckpt')
-   
-    z = utils.box_muller()
+    '''
+    utils.load_model(net, './checkpoints/autoencoder.ckpt')
+    z = utils.box_muller().to(device)
     result = net.decoder(z)
     torchvision.utils.save_image(result.reshape(-1, 1, 28, 28), 
                                  os.path.join(sample_dir, 'manifold.png'), 
-                                 nrow = 11)
+                                 nrow = 10)
         
             
     
