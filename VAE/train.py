@@ -73,11 +73,12 @@ if __name__ == '__main__':
         utils.save_model(net, optim, rec_log, checkpoint_dir, 'autoencoder.ckpt')
     '''
     utils.load_model(net, './checkpoints/autoencoder.ckpt')
-    z = utils.box_muller().to(device)
+    steps = 50
+    z = utils.box_muller(steps).to(device)
     result = net.decoder(z)
     torchvision.utils.save_image(result.reshape(-1, 1, 28, 28), 
                                  os.path.join(sample_dir, 'manifold.png'), 
-                                 nrow = 10)
+                                 nrow = steps)
         
             
     

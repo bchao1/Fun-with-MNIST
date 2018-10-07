@@ -78,10 +78,10 @@ def kl_loss(mu, logvar):
     return -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
 
-def box_muller():
+def box_muller(steps):
     p = []
-    u1 = np.linspace(0.1, 0.9, 10)
-    u2 = np.linspace(0.1, 0.9, 10)
+    u1 = np.linspace(0.01, 0.99, steps)
+    u2 = np.linspace(0.01, 0.99, steps)
     for i in range(len(u1)):
         for j in range(len(u2)):
             z1 = np.sqrt(-2*np.log(u1[i]))*np.cos(2*np.pi*u2[j])
